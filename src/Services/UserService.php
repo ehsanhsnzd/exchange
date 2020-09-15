@@ -5,7 +5,7 @@ namespace Src\Services;
 
 
 
-use Src\Repository\UserRepository;
+use Src\Repository\Mysql\UserRepository;
 
 class UserService
 {

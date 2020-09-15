@@ -12,6 +12,10 @@ class BaseController
     use ApiResponse;
     protected $method;
     protected $id;
+    /**
+     * @var BuyController
+     */
+    private $controller;
 
     public function __construct($method, $id)
     {
@@ -77,6 +81,17 @@ class BaseController
                     break;
             }
         }
+
+        if ($uri[1] === 'buy') {
+            $this->controller = new BuyController();
+            return $response = $this->controller->getAll();
+        }
+
+
+        if ($uri[1] === 'sell') {
+            return $response = $this->getAll();
+        }
+
     }
 
     function authenticate() {

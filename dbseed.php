@@ -1,5 +1,8 @@
 <?php
-require 'bootstrap.php';
+
+use Src\Database\DatabaseConnector;
+
+require 'load.php';
 
 $statement = <<<EOS
 -- MySQL dump 10.13  Distrib 8.0.21, for Linux (x86_64)
@@ -162,6 +165,8 @@ UNLOCK TABLES;
 
 -- Dump completed on 2020-09-15 21:40:19
 EOS;
+
+$dbConnection = (new DatabaseConnector())->getConnection();
 
 try {
     $createTable = $dbConnection->exec($statement);

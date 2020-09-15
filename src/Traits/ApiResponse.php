@@ -24,10 +24,7 @@ use Exception;
 trait ApiResponse
 {
 
-    protected $msg;
-    protected $status;
     protected $httpCode;
-    protected $statusCode;
     protected $meta = [];
     protected $data = null;
 
@@ -62,6 +59,7 @@ trait ApiResponse
 			'data'      => array_values(is_array($this->data) ? $this->data : []),
 		];
         echo json_encode($data);
+        return true;
     }
 
 

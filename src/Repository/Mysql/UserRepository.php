@@ -1,7 +1,7 @@
 <?php
-namespace Src\Repository;
+namespace Src\Repository\Mysql;
 
-class UserRepository extends BaseRepository {
+class UserRepository extends BaseRepository implements Repository {
 
 
     public function all()
@@ -91,23 +91,24 @@ class UserRepository extends BaseRepository {
     public function update($id, Array $input)
     {
         $statement = "
-            UPDATE person
+            UPDATE users
             SET
-                firstname = :firstname,
-                lastname  = :lastname,
-                firstparent_id = :firstparent_id,
-                secondparent_id = :secondparent_id
+                name = :name,
+                email  = :email,
+                password = :password,
+                mobile = :mobile,
+                updated = :updated
             WHERE id = :id;
         ";
 
         try {
             $statement = $this->db->prepare($statement);
             $statement->execute(array(
-                'id' => (int) $id,
-                'firstname' => $input['firstname'],
-                'lastname'  => $input['lastname'],
-                'firstparent_id' => $input['firstparent_id'] ?? null,
-                'secondparent_id' => $input['secondparent_id'] ?? null,
+                'name' => $input['name'],
+                'email'  => $input['email'],
+                'password' => md5($input['password']),
+                'mobile' => $input['mobile'] ?? null,
+                'updated' => date('Y-m-d H:i:s'),
             ));
             return $statement->rowCount();
         } catch (\PDOException $e) {
@@ -118,7 +119,7 @@ class UserRepository extends BaseRepository {
     public function delete($id)
     {
         $statement = "
-            DELETE FROM person
+            DELETE FROM users
             WHERE id = :id;
         ";
 

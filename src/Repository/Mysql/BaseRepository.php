@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Src\Repository;
+namespace Src\Repository\Mysql;
 use Src\Database\DatabaseConnector;
 
 

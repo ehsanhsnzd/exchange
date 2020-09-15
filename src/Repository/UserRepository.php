@@ -8,9 +8,9 @@ class UserRepository extends BaseRepository {
     {
         $statement = "
             SELECT
-                id, firstname, lastname, firstparent_id, secondparent_id
+                *
             FROM
-                person;
+                users;
         ";
 
         try {
@@ -54,8 +54,8 @@ class UserRepository extends BaseRepository {
 
         try {
             $statement = $this->db->prepare($statement);
-            $statement->execute([$input['email'],$input['password']]);
-            $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
+            $statement->execute([$input['email'],md5($input['password'])]);
+            $result = $statement->fetch(\PDO::FETCH_ASSOC);
             return $result;
         } catch (\PDOException $e) {
             exit($e->getMessage());
@@ -76,7 +76,7 @@ class UserRepository extends BaseRepository {
             $result =$statement->execute(array(
                 'name' => $input['name'],
                 'email'  => $input['email'],
-                'password' => $input['password'],
+                'password' => md5($input['password']),
                 'mobile' => $input['mobile'] ?? null,
                 'updated' => date('Y-m-d H:i:s'),
                 'created' => date('Y-m-d H:i:s'),

@@ -42,9 +42,12 @@ class UserService
         return $this->repository->insert($input);
     }
 
-    public function login($input)
+    public function login()
     {
-        return var_dump($this->repository->login($input));
+        $input = (array) json_decode(file_get_contents('php://input'), TRUE);
+        if ($user = $this->repository->login($input))
+        return [$this->makeToken($user['id'])];
+
     }
 
     public function update($id,Array $input)
@@ -89,17 +92,39 @@ class UserService
             'alg' => 'HS256'
         ]);
         $payload = json_encode([
-            'user_id' => 1,
-            'role' => 'admin',
-            'exp' => 1593828222
+            'user_id' => $id,
+            'role' => 'admin'
         ]);
-        $base64UrlHeader = base64UrlEncode($header);
-        $base64UrlPayload = base64UrlEncode($payload);
+        $base64UrlHeader = base64_encode($header);
+        $base64UrlPayload = base64_encode($payload);
         $signature = hash_hmac('sha256', $base64UrlHeader . "." . $base64UrlPayload, $secret, true);
-        $base64UrlSignature = base64UrlEncode($signature);
+        $base64UrlSignature = base64_encode($signature);
 
         $jwt = $base64UrlHeader . "." . $base64UrlPayload . "." . $base64UrlSignature;
         return $jwt;
+    }
+
+    public function validateToken($token)
+    {
+        $secret = getenv('SECRET');
+
+        $tokenParts = explode('.', $token);
+        $header = base64_decode($tokenParts[0]);
+        $payload = base64_decode($tokenParts[1]);
+        $signatureProvided = $tokenParts[2];
+
+
+        $base64UrlHeader = base64_encode($header);
+        $base64UrlPayload = base64_encode($payload);
+        $signature = hash_hmac('sha256', $base64UrlHeader . "." . $base64UrlPayload, $secret, true);
+        $base64UrlSignature = base64_encode($signature);
+
+        $signatureValid = ($base64UrlSignature === $signatureProvided);
+        if (!$signatureValid) {
+            throw new \Exception('The signature is NOT valid');
+        }
+
+        return  $user_id = json_decode($payload)->user_id;
     }
 
     public function unprocessableEntityResponse()

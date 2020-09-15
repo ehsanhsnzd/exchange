@@ -1,0 +1,51 @@
+{
+	"info": {
+		"_postman_id": "c01b0e88-3068-470c-bc0a-c75b879def6b",
+		"name": "skyneb",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "{{localhost}}/user",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiODgiLCJyb2xlIjoiYWRtaW4ifQ==.sk0EVaIAU1AeE2Ut3Mv99HrWZl/XcA0lBr09Q1bezD8=",
+						"type": "text"
+					},
+					{
+						"key": "email",
+						"value": "ehsan4@gmail.com",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\" : \"ehsan\",\n    \"email\" : \"ehsan3@gmail.com\",\n    \"password\" :\"123\",\n    \"mobile\" :\"09125126494\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{localhost}}/user",
+					"host": [
+						"{{localhost}}"
+					],
+					"path": [
+						"user"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

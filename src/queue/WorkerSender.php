@@ -3,7 +3,6 @@
 namespace Src\queue;
 
 
-use PhpAmqpLib\Connection\AMQPConnection;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 

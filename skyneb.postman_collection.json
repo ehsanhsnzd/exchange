@@ -45,6 +45,148 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "{{localhost}}/user/balance",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiODgiLCJyb2xlIjoiYWRtaW4ifQ==.bru7yjJ7s2uMYW9brxltRiVSZ7ht7QuAXydVc6XIqQ0=",
+						"type": "text"
+					},
+					{
+						"key": "email",
+						"value": "ehsan4@gmail.com",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\" : \"ehsan\",\n    \"email\" : \"ehsan8@gmail.com\",\n    \"password\" :\"123\",\n    \"mobile\" :\"09125126498\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{localhost}}/user/balance?XDEBUG_SESSION_START=PHPSTORM",
+					"host": [
+						"{{localhost}}"
+					],
+					"path": [
+						"user",
+						"balance"
+					],
+					"query": [
+						{
+							"key": "XDEBUG_SESSION_START",
+							"value": "PHPSTORM"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "history",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiODgiLCJyb2xlIjoiYWRtaW4ifQ==.bru7yjJ7s2uMYW9brxltRiVSZ7ht7QuAXydVc6XIqQ0=",
+						"type": "text"
+					},
+					{
+						"key": "email",
+						"value": "ehsan4@gmail.com",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\" : \"ehsan\",\n    \"email\" : \"ehsan8@gmail.com\",\n    \"password\" :\"123\",\n    \"mobile\" :\"09125126498\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{localhost}}/history?XDEBUG_SESSION_START=PHPSTORM",
+					"host": [
+						"{{localhost}}"
+					],
+					"path": [
+						"history"
+					],
+					"query": [
+						{
+							"key": "XDEBUG_SESSION_START",
+							"value": "PHPSTORM"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "buy",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiODgiLCJyb2xlIjoiYWRtaW4ifQ==.bru7yjJ7s2uMYW9brxltRiVSZ7ht7QuAXydVc6XIqQ0=",
+						"type": "text"
+					},
+					{
+						"key": "email",
+						"value": "ehsan4@gmail.com",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\" : \"ehsan\",\n    \"email\" : \"ehsan3@gmail.com\",\n    \"password\" :\"123\",\n    \"mobile\" :\"09125126494\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{localhost}}/buy?XDEBUG_SESSION_START=PHPSTORM",
+					"host": [
+						"{{localhost}}"
+					],
+					"path": [
+						"buy"
+					],
+					"query": [
+						{
+							"key": "XDEBUG_SESSION_START",
+							"value": "PHPSTORM"
+						}
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"protocolProfileBehavior": {}

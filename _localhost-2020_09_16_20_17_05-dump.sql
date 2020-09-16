@@ -1,10 +1,3 @@
-<?php
-
-use Src\Database\DatabaseConnector;
-
-require 'load.php';
-
-$statement = <<<EOS
 -- MySQL dump 10.13  Distrib 8.0.21, for Linux (x86_64)
 --
 -- Host: 127.0.0.1    Database: exchange
@@ -222,16 +215,3 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2020-09-16 20:17:05
-
-
-EOS;
-
-$dbConnection = (new DatabaseConnector())->getConnection();
-
-try {
-    $createTable = $dbConnection->exec($statement);
-    echo "Success!\n";
-} catch (\PDOException $e) {
-    exit($e->getMessage());
-}
-?>

@@ -10,11 +10,11 @@ class TradeHistoryRepository extends BaseRepository implements Repository
     public function getByUser($userId)
     {
         $statement = "
-            SELECT
-                *
-            FROM
-                trade_history
-            where user_id = ?  limit 15  ;
+            SELECT buy_fee,sell_fee,amount,created,t1.currency as buy_currency,t2.currency as sell_currency
+            FROM trade_history
+                       JOIN   currencies t1   ON trade_history.buy_currency_id=t1.id
+                       JOIN   currencies t2  ON trade_history.sell_currency_id=t2.id
+            GROUP BY trade_history.id
         ";
 
         try {

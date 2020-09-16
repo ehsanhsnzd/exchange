@@ -5,6 +5,7 @@ namespace Src\Services;
 
 
 use Src\Repository\Mysql\BuyRepository;
+use Src\Repository\Mysql\DepositRepository;
 
 class BuyService
 {
@@ -13,14 +14,27 @@ class BuyService
      * @var mixed|null
      */
     private $repository;
+    private $depositRepository;
 
     public function __construct($repository = NULL){
         $this->repository = $repository ?? new BuyRepository();
+        $this->depositRepository = $repository ?? new DepositRepository();
     }
 
     public function all()
     {
         return $this->repository->all();
+    }
+
+    public function insert()
+    {
+        $input = (array) json_decode(file_get_contents('php://input'), TRUE);
+
+        $balance = $this->depositRepository->balance(88,1);
+        if ($balance< $input['amount'])
+            throw new \Exception('Dont have enough balance');
+
+        return $this->repository->insert($input);
     }
 
     public function update($id,Array $input)

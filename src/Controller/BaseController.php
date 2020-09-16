@@ -4,6 +4,8 @@
 namespace Src\Controller;
 
 
+use Src\Services\BuyService;
+use Src\Services\TradeService;
 use Src\Services\UserService;
 use Src\Traits\ApiResponse;
 
@@ -53,36 +55,38 @@ class BaseController
             $userId = (int) $uri[2];
         }
 
-        if ($uri[1] === 'user')
+        if ($uri[1] === 'user') {
+            $this->controller = new UserController();
             if ($uri[2] === 'login')
-                return $response = $this->login();
-
+                return $response = $this->controller->login();
+        }
         if ($uri[1] === 'user') {
             $this->authenticate();
             switch ($this->method) {
                 case 'GET':
                     if ($this->id) {
-                        $response = $this->get($this->id);
+                        $response = $this->controller->get($this->id);
                     } else {
-                        $response = $this->getAll();
+                        $response = $this->controller->getAll();
                     };
                     break;
                 case 'POST':
-                    $response = $this->register();
+                    $response = $this->controller->register();
                     break;
                 case 'PUT':
-                    $response = $this->update($this->id);
+                    $response = $this->controller->update($this->id);
                     break;
                 case 'DELETE':
-                    $response = $this->delete($this->id);
+                    $response = $this->controller->delete($this->id);
                     break;
                 default:
-                    $response = $this->notFoundResponse();
+                    $response = $this->controller->notFoundResponse();
                     break;
             }
         }
 
         if ($uri[1] === 'buy') {
+            (new TradeService())->doTrade();
             $this->controller = new BuyController();
             return $response = $this->controller->getAll();
         }

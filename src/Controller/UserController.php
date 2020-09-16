@@ -9,9 +9,8 @@ class UserController extends BaseController {
     use ApiResponse;
     private $service;
 
-    public function __construct($method, $id)
+    public function __construct()
     {
-        parent::__construct($method,$id);
         $this->service = new UserService();
     }
 

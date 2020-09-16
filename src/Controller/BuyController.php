@@ -28,7 +28,7 @@ class BuyController {
     public function setBuy()
     {
         try {
-            $response = $this->service->register();
+            $response = $this->service->insert();
             $this->setMetaData($response)->successResponse();
         }catch (\PDOException $exception){
             $this->customResponse($exception->getMessage(),$exception->getCode(),$exception->getCode());

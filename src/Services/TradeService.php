@@ -42,6 +42,7 @@ class TradeService
             $this->calc($trades);
             $this->doTrade();
         }
+        return true;
     }
 
     public function calc(array $trades)

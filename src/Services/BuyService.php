@@ -4,6 +4,7 @@
 namespace Src\Services;
 
 
+use Src\queue\WorkerSender;
 use Src\Repository\Mysql\BuyRepository;
 use Src\Repository\Mysql\DepositRepository;
 
@@ -38,7 +39,10 @@ class BuyService
 
          $result = $this->repository->insert($input);
 
-        (new TradeService())->doTrade($input['from'],$input['to']);
+
+//        (new TradeService())->doTrade($input['from'],$input['to']);
+        $sender = new WorkerSender();
+        $sender->execute(json_encode([$input['from'],$input['to']]));
 
         return $result;
     }

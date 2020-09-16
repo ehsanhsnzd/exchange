@@ -2,7 +2,7 @@
 
 
 namespace Src\queue;
-
+use Src\Services\TradeService;
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
@@ -69,9 +69,9 @@ class WorkerReceiver
      */
     public function process(AMQPMessage $msg)
     {
-        echo "first";
-        sleep(4);
-        echo "sec";
+        $input = json_decode($msg->getBody());
+        $result = (new TradeService())->doTrade($input[0],$input[1]);
+        echo $result;
         /**
          * If a consumer dies without sending an acknowledgement the AMQP broker
          * will redeliver it to another consumer or, if none are available at the
@@ -81,32 +81,5 @@ class WorkerReceiver
         $msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
     }
 
-    /**
-     * Generates invoice's pdf
-     *
-     * @return WorkerReceiver
-     */
-    private function generatePdf()
-    {
-        /**
-         * Mocking a pdf generation processing time.  This will take between
-         * 2 and 5 seconds
-         */
-        sleep(mt_rand(2, 5));
-        return $this;
-    }
 
-    /**
-     * Sends email
-     *
-     * @return WorkerReceiver
-     */
-    private function sendEmail()
-    {
-        /**
-         * Mocking email sending time.  This will take between 1 and 3 seconds
-         */
-        sleep(mt_rand(1,3));
-        return $this;
-    }
 }

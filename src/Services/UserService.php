@@ -5,6 +5,7 @@ namespace Src\Services;
 
 
 
+use Src\Repository\Mysql\DepositRepository;
 use Src\Repository\Mysql\UserRepository;
 
 class UserService
@@ -14,10 +15,15 @@ class UserService
      * @var UserRepository
      */
     private $repository;
+    /**
+     * @var mixed|DepositRepository
+     */
+    private $depositRepository;
 
     public function __construct($repository = null)
     {
         $this->repository = $repository ?? new UserRepository();
+        $this->depositRepository = $repository ?? new DepositRepository();
     }
 
     public function all()
@@ -30,6 +36,11 @@ class UserService
         return $this->repository->get($id);
     }
 
+    public function balance($id)
+    {
+        return $this->depositRepository->balance($id);
+    }
+
     public function register()
     {
 
@@ -39,7 +50,12 @@ class UserService
         }
 
         $input['password'] = $this->makeToken($input['password']);
-        return $this->repository->insert($input);
+        $user= $this->repository->insert($input);
+        $this->depositRepository->insert([
+            'user_id'=>$user,
+            'balance'=>1000,
+            'currency_id'=>1
+        ]);
     }
 
     public function login()
@@ -128,20 +144,6 @@ class UserService
         return  $user_id = json_decode($payload)->user_id;
     }
 
-    public function unprocessableEntityResponse()
-    {
-        $response['status_code_header'] = 'HTTP/1.1 422 Unprocessable Entity';
-        $response['body'] = json_encode([
-            'error' => 'Invalid input'
-        ]);
-        return $response;
-    }
 
-    public function notFoundResponse()
-    {
-        $response['status_code_header'] = 'HTTP/1.1 404 Not Found';
-        $response['body'] = null;
-        return $response;
-    }
 
 }

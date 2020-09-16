@@ -6,14 +6,12 @@ namespace Src\Repository\Mysql;
 
 class SellRepository extends BaseRepository implements Repository
 {
-    public function allCurrency($id)
+    public function allByCurrency($id)
     {
         $statement = "
-            SELECT
-                *
-            FROM
-                sells
-            where currency_id = ?  limit 15  ;
+          SELECT *
+            FROM sells where currency_id= ? JOIN currencies ON sells.currency_id=currencies.id
+            GROUP BY sells.id
         ";
 
         try {

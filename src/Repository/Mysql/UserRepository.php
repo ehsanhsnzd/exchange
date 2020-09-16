@@ -22,14 +22,15 @@ class UserRepository extends BaseRepository implements Repository {
         }
     }
 
-    public function get($id,$columns)
+    public function get($id,$columns= null)
     {
+        $column =$columns ?? 'id';
         $statement = "
             SELECT
                 *
             FROM
                 users
-            WHERE $columns = ?;
+            WHERE $column = ?;
         ";
 
         try {
@@ -84,7 +85,8 @@ class UserRepository extends BaseRepository implements Repository {
 
             if (!$result)
                 throw new \PDOException('error in inserting data');
-            return $statement->rowCount();
+            return  $this->db->lastInsertId();
+        ;
 
     }
 

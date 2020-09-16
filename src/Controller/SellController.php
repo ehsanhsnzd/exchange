@@ -15,10 +15,10 @@ class SellController {
         $this->service = new SellService($user);
     }
 
-    public function getAll()
+    public function getAll($req)
     {
         try {
-            $response = $this->service->all();
+            $response = $this->service->all($req);
             return $this->setMetaData($response)->successResponse();
         }catch (\Exception $exception){
             $this->customResponse($exception->getMessage(),$exception->getCode(),$exception->getCode());

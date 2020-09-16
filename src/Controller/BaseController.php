@@ -39,7 +39,7 @@ class BaseController
 
     public function handleRoute()
     {
-
+        $req = [];
         $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         $uri = explode('/', $uri);
 
@@ -65,31 +65,39 @@ class BaseController
         $user = $this->authenticate();
 
         if ($uri[1] === 'user') {
+            if ($uri[2] === 'balance')
+                return $response = $this->controller->balance($user);
             if (isset($uri[2]))
-                $id = (int)$uri[2];
+            $id = (int)$uri[2];
 
             switch ($this->method) {
                 case 'GET':
                     if ($id) {
-                        $response = $this->controller->get($id);
+                        return $response = $this->controller->get($id);
                     } else {
                         $response = $this->controller->getAll();
                     };
                     break;
                 case 'PUT':
-                    $response = $this->controller->update($id);
+                    return $response = $this->controller->update($id);
                     break;
                 case 'DELETE':
-                    $response = $this->controller->delete($id);
+                    return $response = $this->controller->delete($id);
                     break;
             }
         }
 
+        if (isset($uri[2]) && isset($uri[3]))
+            $req['from'] = (int)$uri[2];
+            $req['to'] = (int)$uri[3];
+
         if ($uri[1] === 'buy') {
             $this->controller = new BuyController($user);
             switch ($this->method) {
+                case 'GET':
+                    return $response = $this->controller->getAll($req);
                 case 'POST':
-                    $response = $this->controller->set();
+                    return $response = $this->controller->set();
                     break;
             }
         }
@@ -97,8 +105,10 @@ class BaseController
         if ($uri[1] === 'sell') {
             $this->controller = new SellController($user);
             switch ($this->method) {
+                case 'GET':
+                    return  $response = $this->controller->getAll($req);
                 case 'POST':
-                    $response = $this->controller->set();
+                    return $response = $this->controller->set();
                     break;
             }
         }
@@ -109,8 +119,8 @@ class BaseController
 
             $this->controller = new HistoryController($user);
             switch ($this->method) {
-                case 'POST':
-                    $response = $this->controller->getAll();
+                case 'GET':
+                    return $response = $this->controller->getAll();
                     break;
             }
         }

@@ -7,16 +7,21 @@ namespace Src\Repository\Mysql;
 class DepositRepository extends BaseRepository implements Repository
 {
 
-    public function balance($userId,$currencyId)
+    public function balance($userId,$currencyId = null)
     {
+        $currencyId ?
         $statement = "
             select sum(balance) as user_balance from deposits where user_id = ? and  currency_id =? group by currency_id
-        ";
+        " :
+            $statement = "
+            select currency,sum(balance) as user_balance,currency_id from deposits JOIN currencies ON deposits.currency_id=currencies.id where user_id = ?  group by currency_id
+        "
+        ;
 
         try {
             $statement = $this->db->prepare($statement);
-            $statement->execute([$userId,$currencyId]);
-            $result = $statement->fetch(\PDO::FETCH_ASSOC);
+            $statement->execute( $currencyId ? [$userId,$currencyId] : [$userId]);
+            $result = $currencyId ? $statement->fetch(\PDO::FETCH_ASSOC) : $statement->fetchAll(\PDO::FETCH_ASSOC);
             return $result;
         } catch (\PDOException $e) {
             exit($e->getMessage());

@@ -31,7 +31,7 @@ class TradeService
         $this->historyRepository = new TradeHistoryRepository();
     }
 
-    public function doTrade()
+    public function doTrade($from,$to)
     {
         $trades = $this->repository->trade(1,2);
 

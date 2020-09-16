@@ -24,6 +24,17 @@ class UserController extends BaseController {
         }
     }
 
+    public function balance($id)
+    {
+        try {
+            $this->setMetaData($this->service->balance($id))->successResponse();
+        }catch (\PDOException $exception){
+            $this->customResponse($exception->getMessage(),$exception->getCode(),$exception->getCode());
+        }catch (\Exception $exception) {
+            $this->customResponse($exception->getMessage(),$exception->getCode(),$exception->getCode());
+        }
+    }
+
     public function get($id)
     {
         try {

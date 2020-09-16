@@ -14,21 +14,27 @@ class SellService
      */
     private $repository;
     private $depositRepository;
+    private $user;
 
-    public function __construct($repository = NULL){
+    public function __construct($user,$repository = NULL){
         $this->repository = $repository ?? new SellRepository();
-        $this->depositRepository = $repository ?? new DepositRepository();
+        $this->depositRepository = new DepositRepository();
+        $this->user = $user;
     }
 
     public function insert()
     {
         $input = (array) json_decode(file_get_contents('php://input'), TRUE);
+        $input['user_id'] = $this->user ;
+        $balance = $this->depositRepository->balance($this->user ,$input['currency_id']);
+//        if ($balance['user_balance']< $input['amount'])
+//            throw new \Exception('Dont have enough balance');
 
-        $balance = $this->depositRepository->balance(88,1);
-        if ($balance< $input['amount'])
-            throw new \Exception('Dont have enough balance');
+        $result = $this->repository->insert($input);
 
-        return $this->repository->insert($input);
+        (new TradeService())->doTrade();
+
+        return $result;
     }
 
     public function all()

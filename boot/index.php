@@ -14,7 +14,7 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 
 $requestMethod = $_SERVER["REQUEST_METHOD"];
 // pass the request method and user ID to the UserController:
-$controller = new \Src\Controller\BaseController($requestMethod, $userId);
+$controller = new \Src\Controller\BaseController($requestMethod);
 $controller->processRequest();
 
 ?>

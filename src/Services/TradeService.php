@@ -7,6 +7,7 @@ namespace Src\Services;
 use Src\Repository\Mysql\BuyRepository;
 use Src\Repository\Mysql\DepositRepository;
 use Src\Repository\Mysql\SellRepository;
+use Src\Repository\Mysql\TradeHistoryRepository;
 use Src\Repository\Mysql\TradeRepository;
 
 class TradeService
@@ -19,6 +20,7 @@ class TradeService
     private $buyRepository;
     private $sellRepository;
     private $depositRepository;
+    private $historyRepository;
 
     public function __construct($repository =null)
     {
@@ -26,13 +28,19 @@ class TradeService
         $this->buyRepository = new BuyRepository();
         $this->sellRepository = new SellRepository();
         $this->depositRepository = new DepositRepository();
+        $this->historyRepository = new TradeHistoryRepository();
     }
 
     public function doTrade()
     {
         $trades = $this->repository->trade(1,2);
-        if($trades['buy_fee'] >= $trades['sell_fee']) {
+
+        if(is_array($trades))
+        if($trades['buy_fee'] == $trades['sell_fee']) {
             $this->calc($trades);
+        }else if($trades['buy_fee'] > $trades['sell_fee']) {
+            $this->calc($trades);
+            $this->doTrade();
         }
     }
 
@@ -41,7 +49,6 @@ class TradeService
         if ($trades['buy_amount'] == $trades['sell_amount']) {
             $this->buyRepository->delete($trades['buy_id']);
             $this->sellRepository->delete($trades['sell_id']);
-            $this->balance($trades);
         }
         else if ($trades['buy_amount'] > $trades['sell_amount']) {
             $trades['buy_amount'] = $trades['buy_amount'] - $trades['sell_amount'];
@@ -49,7 +56,6 @@ class TradeService
             $this->sellRepository->delete($trades['sell_id']);
             $this->buyRepository->update($trades['buy_id'], ['amount' => ($trades['buy_amount'])]);
             $trades['buy_amount'] =  $trades['sell_amount'];
-            $this->balance($trades);
 
         }
         else if ($trades['buy_amount'] < $trades['sell_amount']) {
@@ -58,9 +64,25 @@ class TradeService
             $this->buyRepository->delete($trades['buy_id']);
             $this->sellRepository->update($trades['buy_id'], ['amount' => ($trades['sell_amount'] )]);
             $trades['sell_amount'] = $trades['buy_amount'];
-            $this->balance($trades);
-
         }
+
+        $this->balance($trades);
+
+        $this->tradeHistory($trades,$trades['buy_user']);
+        $this->tradeHistory($trades,$trades['sell_user']);
+
+    }
+
+    public function tradeHistory($trades,$user)
+    {
+        return $this->historyRepository->insert([
+            'user_id' => $user,
+            'buy_currency_id'=>$trades['buy_currency'],
+            'sell_currency_id'=>$trades['sell_currency'],
+            'buy_fee'=>$trades['buy_fee'],
+            'sell_fee'=>$trades['sell_fee'],
+            'amount'=>$trades['buy_amount'],
+        ]);
     }
 
     public function balance($trades){

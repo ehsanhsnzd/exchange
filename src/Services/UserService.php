@@ -50,8 +50,9 @@ class UserService
 
     }
 
-    public function update($id,Array $input)
+    public function update($id)
     {
+        $input = (array) json_decode(file_get_contents('php://input'), TRUE);
         return $this->repository->update($id,$input);
     }
 

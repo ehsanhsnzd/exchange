@@ -14,7 +14,7 @@ class BuyRepository extends BaseRepository implements Repository
                 *
             FROM
                 buys
-            where currency_id = ?    ;
+            where currency_id = ? limit 15    ;
         ";
 
         try {
@@ -52,7 +52,7 @@ class BuyRepository extends BaseRepository implements Repository
             INSERT INTO buys
                 (amount, user_id, currency_id,fee,updated,created)
             VALUES
-                (:name, :amount, :user_id,:fee, :currency_id, :updated,:created);
+                (:amount, :user_id, :currency_id, :fee,:updated,:created);
         ";
 
 
@@ -86,6 +86,7 @@ class BuyRepository extends BaseRepository implements Repository
         try {
             $statement = $this->db->prepare($statement);
             $statement->execute(array(
+                'id' =>$id,
                 'amount' => $input['amount'],
                 'confirm'  => 1,
                 'updated' => date('Y-m-d H:i:s'),

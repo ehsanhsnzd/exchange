@@ -4,27 +4,27 @@
 namespace Src\Repository\Mysql;
 
 
-class DepositRepository extends BaseRepository implements Repository
+class TradeHistoryRepository extends BaseRepository implements Repository
 {
 
-    public function balance($userId,$currencyId)
+    public function getByUser($userId)
     {
         $statement = "
-            select sum(balance) as user_balance from deposits where user_id = ? and  currency_id =? group by currency_id
+            SELECT
+                *
+            FROM
+                trade_history
+            where user_id = ?  limit 15  ;
         ";
 
         try {
             $statement = $this->db->prepare($statement);
-            $statement->execute([$userId,$currencyId]);
-            $result = $statement->fetch(\PDO::FETCH_ASSOC);
+            $statement->execute([$userId]);
+            $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
             return $result;
         } catch (\PDOException $e) {
             exit($e->getMessage());
         }
-    }
-    public function all()
-    {
-        // TODO: Implement all() method.
     }
 
     public function get($id, $columns)
@@ -35,18 +35,21 @@ class DepositRepository extends BaseRepository implements Repository
     public function insert(array $input)
     {
         $statement = "
-            INSERT INTO deposits
-                (balance, currency_id,user_id,updated,created)
+            INSERT INTO trade_history
+                (amount, user_id, buy_currency_id,sell_currency_id,buy_fee,sell_fee,updated,created)
             VALUES
-                (:balance, :currency_id,:user_id, :updated ,:created);
+                (:amount, :user_id, :buy_currency_id, :sell_currency_id, :buy_fee, :sell_fee,:updated,:created);
         ";
 
 
         $statement = $this->db->prepare($statement);
         $result =$statement->execute(array(
-            'balance' => $input['balance'],
-            'user_id' => $input['user_id'],
-            'currency_id'  => $input['currency_id'],
+            'amount' => $input['amount'],
+            'user_id'  => $input['user_id'],
+            'buy_currency_id' => $input['buy_currency_id'] ,
+            'sell_currency_id' => $input['sell_currency_id'] ,
+            'buy_fee' => $input['buy_fee'],
+            'sell_fee' => $input['sell_fee'],
             'updated' => date('Y-m-d H:i:s'),
             'created' => date('Y-m-d H:i:s'),
         ));
@@ -54,6 +57,7 @@ class DepositRepository extends BaseRepository implements Repository
         if (!$result)
             throw new \PDOException('error in inserting data');
         return $statement->rowCount();
+
     }
 
     public function update($id, array $input)
@@ -64,5 +68,10 @@ class DepositRepository extends BaseRepository implements Repository
     public function delete($id)
     {
         // TODO: Implement delete() method.
+    }
+
+    public function all()
+    {
+        // TODO: Implement all() method.
     }
 }

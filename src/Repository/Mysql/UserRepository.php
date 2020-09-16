@@ -104,6 +104,7 @@ class UserRepository extends BaseRepository implements Repository {
         try {
             $statement = $this->db->prepare($statement);
             $statement->execute(array(
+                'id' =>$id,
                 'name' => $input['name'],
                 'email'  => $input['email'],
                 'password' => md5($input['password']),

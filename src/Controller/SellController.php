@@ -2,16 +2,17 @@
 namespace Src\Controller;
 
 use Src\Services\BuyService;
+use Src\Services\SellService;
 use Src\Traits\ApiResponse;
 
-class BuyController {
+class SellController {
 
     use ApiResponse;
     private $service;
 
     public function __construct($user)
     {
-        $this->service = new BuyService($user);
+        $this->service = new SellService($user);
     }
 
     public function getAll()

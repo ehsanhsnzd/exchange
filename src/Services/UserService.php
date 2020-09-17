@@ -5,6 +5,7 @@ namespace Src\Services;
 
 
 
+use Src\Repository\Mysql\DepositRepository;
 use Src\Repository\Mysql\UserRepository;
 
 class UserService
@@ -14,10 +15,15 @@ class UserService
      * @var UserRepository
      */
     private $repository;
+    /**
+     * @var mixed|DepositRepository
+     */
+    private $depositRepository;
 
     public function __construct($repository = null)
     {
         $this->repository = $repository ?? new UserRepository();
+        $this->depositRepository = $repository ?? new DepositRepository();
     }
 
     public function all()
@@ -30,6 +36,11 @@ class UserService
         return $this->repository->get($id);
     }
 
+    public function balance($id)
+    {
+        return $this->depositRepository->balance($id);
+    }
+
     public function register()
     {
 
@@ -38,8 +49,27 @@ class UserService
             throw new \Exception('Invalid input data');
         }
 
-        $input['password'] = $this->makeToken($input['password']);
-        return $this->repository->insert($input);
+        $user= $this->repository->insert($input);
+        $this->depositRepository->insert([
+            'user_id'=>$user,
+            'balance'=>1000,
+            'currency_id'=>1
+        ]);
+        $this->depositRepository->insert([
+            'user_id'=>$user,
+            'balance'=>1000,
+            'currency_id'=>2
+        ]);
+        $this->depositRepository->insert([
+            'user_id'=>$user,
+            'balance'=>1000,
+            'currency_id'=>3
+        ]);
+        $this->depositRepository->insert([
+            'user_id'=>$user,
+            'balance'=>1000,
+            'currency_id'=>4
+        ]);
     }
 
     public function login()
@@ -50,8 +80,14 @@ class UserService
 
     }
 
-    public function update($id,Array $input)
+    public function update($id)
     {
+        $input = (array) json_decode(file_get_contents('php://input'), TRUE);
+
+        if (! $this->validate($input)) {
+            throw new \Exception('Invalid input data');
+        }
+
         return $this->repository->update($id,$input);
     }
 
@@ -67,11 +103,17 @@ class UserService
         if(!empty($mobile) || !empty($email))
             throw new \Exception('Data is not unique');
 
+
+        if (empty($input['password']))
+            return false;
+
         if (! isset($input['name']))
             return false;
 
         if (! isset($input['email']))
             return false;
+
+
 
         return true;
     }
@@ -127,20 +169,6 @@ class UserService
         return  $user_id = json_decode($payload)->user_id;
     }
 
-    public function unprocessableEntityResponse()
-    {
-        $response['status_code_header'] = 'HTTP/1.1 422 Unprocessable Entity';
-        $response['body'] = json_encode([
-            'error' => 'Invalid input'
-        ]);
-        return $response;
-    }
 
-    public function notFoundResponse()
-    {
-        $response['status_code_header'] = 'HTTP/1.1 404 Not Found';
-        $response['body'] = null;
-        return $response;
-    }
 
 }

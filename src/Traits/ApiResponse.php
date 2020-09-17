@@ -3,12 +3,13 @@
 namespace Src\Traits;
 
 use Exception;
+use Src\Traits;
 
 /**
  *
  * @Schema(
  *   schema="meta",
- *   type="object",
+ *   type="object",codes
  *   allOf={
  *       @Schema(
  *          @Property (property= "msg", type="string"),
@@ -73,74 +74,7 @@ trait ApiResponse
 
         return $this->response();
     }
-
-
-    public function notFoundResponse()
-    {
-        $this->setMsgAndStatus('Your requested resource was not found.','Failed');
-
-        $this->httpCode    = 404;
-
-        return $this->response();
-
-    }
-
-
-    public function failedResponse()
-    {
-        $this->setMsgAndStatus('Sorry. Internal server error.','Failed');
-
-        $this->httpCode    = 500;
-
-        return $this->response();
-
-    }
-
-
-    public function notAuthenticatedResponse()
-    {
-        $this->setMsgAndStatus('Not Authenticated. Make sure your token is valid','Failed');
-
-        $this->httpCode    = 401;
-
-        return $this->response();
-
-    }
-
-
-    public function methodNotAllowedHttpException()
-    {
-        $this->setMsgAndStatus('Method not allowed!','Failed');
-
-        $this->httpCode    = 405;
-
-        return $this->response();
-
-    }
-
-
-    public function notAuthorizedResponse()
-    {
-        $this->setMsgAndStatus('You are not authorized!','Failed');
-
-        $this->httpCode    = 403;
-
-        return $this->response();
-
-    }
-
-
-    public function badRequestResponse()
-    {
-        $this->setMsgAndStatus('The request is not in accepted format','Failed');
-
-        $this->httpCode    = 400;
-
-        return $this->response();
-
-    }
-
-
+    
 
     /**
      * @param string $msg
@@ -152,13 +86,21 @@ trait ApiResponse
      */
     public function customResponse(string $msg, string $status, int $httpCode, int $statusCode = 0,$data = [])
     {
-        $this->setMsgAndStatus($msg, $status, $statusCode);
 
+        $headerMsg=null;
+        foreach (StatusCodes::codes() as $key=>$name)
+            if($key==$httpCode)
+                $headerMsg = $name;
+
+        $this->setMsgAndStatus($msg, $status, $statusCode);
+        header( 'HTTP/1.1 '.$httpCode.' '.$headerMsg);
         $this->httpCode    = $httpCode;
         $this->data        = $data;
 
         return $this->response();
 
     }
+
+
 
 }

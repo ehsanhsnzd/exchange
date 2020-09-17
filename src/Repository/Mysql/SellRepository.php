@@ -6,17 +6,17 @@ namespace Src\Repository\Mysql;
 
 class SellRepository extends BaseRepository implements Repository
 {
-    public function all()
+    public function allByCurrency($id)
     {
         $statement = "
-            SELECT
-                *
-            FROM
-                sells;
+          SELECT *
+            FROM sells  JOIN currencies ON sells.currency_id=currencies.id where currency_id= ?
+            GROUP BY sells.id
         ";
 
         try {
-            $statement = $this->db->query($statement);
+            $statement = $this->db->prepare($statement);
+            $statement->execute([$id]);
             $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
             return $result;
         } catch (\PDOException $e) {
@@ -29,18 +29,18 @@ class SellRepository extends BaseRepository implements Repository
     {
         $statement = "
             INSERT INTO sells
-                (amount, user_id, currency_id,updated,created)
+                (amount, user_id, currency_id,fee,updated,created)
             VALUES
-                (:name, :amount, :user_id, :currency_id, :updated,:created);
+                (:amount, :user_id, :currency_id, :fee,:updated,:created);
         ";
 
 
         $statement = $this->db->prepare($statement);
         $result =$statement->execute(array(
-            'name' => $input['name'],
-            'email'  => $input['email'],
-            'password' => md5($input['password']),
-            'mobile' => $input['mobile'] ?? null,
+            'amount' => $input['amount'],
+            'user_id'  => $input['user_id'],
+            'currency_id' => $input['currency_id'] ,
+            'fee' => $input['fee'],
             'updated' => date('Y-m-d H:i:s'),
             'created' => date('Y-m-d H:i:s'),
         ));
@@ -75,6 +75,31 @@ class SellRepository extends BaseRepository implements Repository
 
     public function update($id, array $input)
     {
-        // TODO: Implement update() method.
+        $statement = "
+            UPDATE sells
+            SET
+                amount = :amount,
+                confirm  = :confirm,
+                updated = :updated
+            WHERE id = :id;
+        ";
+
+        try {
+            $statement = $this->db->prepare($statement);
+            $statement->execute(array(
+                'id' =>$id,
+                'amount' => $input['amount'],
+                'confirm'  => 1,
+                'updated' => date('Y-m-d H:i:s'),
+            ));
+            return $statement->rowCount();
+        } catch (\PDOException $e) {
+            exit($e->getMessage());
+        }
+    }
+
+    public function all()
+    {
+        // TODO: Implement all() method.
     }
 }

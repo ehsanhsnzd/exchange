@@ -8,11 +8,12 @@ class UserController extends BaseController {
 
     use ApiResponse;
     private $service;
+    private $user;
 
-    public function __construct($method, $id)
+    public function __construct($user = null)
     {
-        parent::__construct($method,$id);
         $this->service = new UserService();
+        $this->user = $user;
     }
 
     public function getAll()
@@ -25,15 +26,26 @@ class UserController extends BaseController {
         }
     }
 
-    public function get($id)
+    public function balance($id)
     {
-        $result = $this->service->get($id);
-        if (! $result) {
-            return $this->notFoundResponse();
+        try {
+            $this->setMetaData($this->service->balance($id))->successResponse();
+        }catch (\PDOException $exception){
+            $this->customResponse($exception->getMessage(),$exception->getCode(),500);
+        }catch (\Exception $exception) {
+            $this->customResponse($exception->getMessage(),$exception->getCode(),400);
         }
-        $response['status_code_header'] = 'HTTP/1.1 200 OK';
-        $response['body'] = json_encode($result);
-        return $response;
+    }
+
+    public function get()
+    {
+        try {
+            $this->setMetaData($this->service->get($this->user))->successResponse();
+        }catch (\PDOException $exception){
+            $this->customResponse($exception->getMessage(),$exception->getCode(),500);
+        }catch (\Exception $exception) {
+            $this->customResponse($exception->getMessage(),$exception->getCode(),400);
+        }
     }
 
     public function register()
@@ -42,9 +54,9 @@ class UserController extends BaseController {
             $response = $this->service->register();
             $this->setMetaData($response)->successResponse();
         }catch (\PDOException $exception){
-            $this->customResponse($exception->getMessage(),$exception->getCode(),$exception->getCode());
+            $this->customResponse($exception->getMessage(),$exception->getCode(),400);
         }catch (\Exception $exception) {
-            $this->customResponse($exception->getMessage(),$exception->getCode(),$exception->getCode());
+            $this->customResponse($exception->getMessage(),$exception->getCode(),400);
         }
     }
 
@@ -53,38 +65,32 @@ class UserController extends BaseController {
         try {
             $this->setMetaData($this->service->login())->successResponse();
         }catch (\PDOException $exception){
-            $this->customResponse($exception->getMessage(),$exception->getCode(),$exception->getCode());
+            $this->customResponse($exception->getMessage(),$exception->getCode(),500);
         }catch (\Exception $exception) {
-            $this->customResponse($exception->getMessage(),$exception->getCode(),$exception->getCode());
+            $this->customResponse($exception->getMessage(),$exception->getCode(),400);
         }
     }
 
     public function update($id)
     {
-        $result = $this->service->get($id);
-        if (! $result) {
-            return $this->notFoundResponse();
+        try {
+            $this->setMetaData($this->service->update($id))->successResponse();
+        }catch (\PDOException $exception){
+            $this->customResponse($exception->getMessage(),$exception->getCode(),500);
+        }catch (\Exception $exception) {
+            $this->customResponse($exception->getMessage(),$exception->getCode(),400);
         }
-        $input = (array) json_decode(file_get_contents('php://input'), TRUE);
-        if (! $this->validatePerson($input)) {
-            return $this->unprocessableEntityResponse();
-        }
-        $this->service->update($id, $input);
-        $response['status_code_header'] = 'HTTP/1.1 200 OK';
-        $response['body'] = null;
-        return $response;
     }
 
     public function delete($id)
     {
-        $result = $this->personGateway->find($id);
-        if (! $result) {
-            return $this->notFoundResponse();
+        try {
+            $this->setMetaData($this->service->delete($id))->successResponse();
+        }catch (\PDOException $exception){
+            $this->customResponse($exception->getMessage(),$exception->getCode(),500);
+        }catch (\Exception $exception) {
+            $this->customResponse($exception->getMessage(),$exception->getCode(),400);
         }
-        $this->personGateway->delete($id);
-        $response['status_code_header'] = 'HTTP/1.1 200 OK';
-        $response['body'] = null;
-        return $response;
     }
 
 

@@ -22,20 +22,21 @@ class UserRepository extends BaseRepository implements Repository {
         }
     }
 
-    public function get($id,$columns)
+    public function get($id,$columns= null)
     {
+        $column =$columns ?? 'id';
         $statement = "
             SELECT
-                *
+                name,email,mobile
             FROM
                 users
-            WHERE $columns = ?;
+            WHERE $column = ?;
         ";
 
         try {
             $statement = $this->db->prepare($statement);
-            $statement->execute([$id]);
-            $result = $statement->rowCount();
+             $statement->execute([$id]);
+            $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
             return $result;
         } catch (\PDOException $e) {
             exit($e->getMessage());
@@ -84,7 +85,8 @@ class UserRepository extends BaseRepository implements Repository {
 
             if (!$result)
                 throw new \PDOException('error in inserting data');
-            return $statement->rowCount();
+            return  $this->db->lastInsertId();
+        ;
 
     }
 
@@ -104,6 +106,7 @@ class UserRepository extends BaseRepository implements Repository {
         try {
             $statement = $this->db->prepare($statement);
             $statement->execute(array(
+                'id' =>$id,
                 'name' => $input['name'],
                 'email'  => $input['email'],
                 'password' => md5($input['password']),

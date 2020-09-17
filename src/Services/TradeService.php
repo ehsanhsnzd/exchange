@@ -33,7 +33,7 @@ class TradeService
 
     public function doTrade($from,$to)
     {
-        $trades = $this->repository->trade(1,2);
+        $trades = $this->repository->trade($from,$to);
 
         if(is_array($trades))
         if($trades['buy_fee'] == $trades['sell_fee']) {
@@ -63,7 +63,7 @@ class TradeService
             $trades['sell_amount'] = $trades['sell_amount'] - $trades['buy_amount'];
 
             $this->buyRepository->delete($trades['buy_id']);
-            $this->sellRepository->update($trades['buy_id'], ['amount' => ($trades['sell_amount'] )]);
+            $this->sellRepository->update($trades['sell_id'], ['amount' => ($trades['sell_amount'] )]);
             $trades['sell_amount'] = $trades['buy_amount'];
         }
 

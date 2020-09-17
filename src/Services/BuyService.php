@@ -34,7 +34,7 @@ class BuyService
         $input = (array) json_decode(file_get_contents('php://input'), TRUE);
         $input['user_id'] = $this->user ;
         $balance = $this->depositRepository->balance($this->user ,$input['currency_id']);
-        if ($balance['user_balance']< $input['amount'])
+        if ($balance['user_balance']< ($input['amount']*$input['fee']))
             throw new \Exception('Dont have enough balance');
 
          $result = $this->repository->insert($input);

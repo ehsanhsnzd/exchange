@@ -4,6 +4,7 @@
 namespace Src\Services;
 
 
+use Src\queue\WorkerSender;
 use Src\Repository\Mysql\DepositRepository;
 use Src\Repository\Mysql\SellRepository;
 
@@ -27,12 +28,14 @@ class SellService
         $input = (array) json_decode(file_get_contents('php://input'), TRUE);
         $input['user_id'] = $this->user ;
         $balance = $this->depositRepository->balance($this->user ,$input['currency_id']);
-        if ($balance['user_balance']< $input['amount'])
+        if ($balance['user_balance']< ($input['amount']*$input['fee']))
             throw new \Exception('Dont have enough balance');
 
         $result = $this->repository->insert($input);
 
-        (new TradeService())->doTrade($input['from'],$input['to']);
+//        (new TradeService())->doTrade($input['from'],$input['to']);
+        $sender = new WorkerSender();
+        $sender->execute(json_encode([$input['from'],$input['to']]));
 
         return $result;
     }

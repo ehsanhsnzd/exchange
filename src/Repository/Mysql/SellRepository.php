@@ -9,10 +9,10 @@ class SellRepository extends BaseRepository implements Repository
     public function allByCurrency($id)
     {
         $statement = "
-          SELECT *
-            FROM sells  JOIN currencies ON sells.currency_id=currencies.id where currency_id= ?
-            GROUP BY sells.id
-        ";
+       select *
+from ( select  sells.id as ids,fee,amount,currency_id,currency from sells JOIN currencies ON sells.currency_id=currencies.id where currency_id= ?
+group by sells.id) t1 order by fee
+            ";
 
         try {
             $statement = $this->db->prepare($statement);
